@@ -2,8 +2,11 @@ package br.com.lucindo.biblioteca;
 
 import br.com.lucindo.biblioteca.config.ConexaoFactory;
 import br.com.lucindo.biblioteca.dao.LivroDAO;
+import br.com.lucindo.biblioteca.dao.UsuarioDAO;
 import br.com.lucindo.biblioteca.dao.sqlite.LivroDAOSQLite;
+import br.com.lucindo.biblioteca.dao.sqlite.UsuarioDAOSQLite;
 import br.com.lucindo.biblioteca.model.Livro;
+import br.com.lucindo.biblioteca.model.Usuario;
 
 import java.sql.Connection;
 import java.util.List;
@@ -20,6 +23,7 @@ public class Main {
         }
 
         LivroDAO livroDAO = new LivroDAOSQLite();
+        UsuarioDAO usuarioDAO = new UsuarioDAOSQLite();
 
         try (Scanner scanner = new Scanner(System.in)) {
             int opcao;
@@ -28,6 +32,7 @@ public class Main {
                 opcao = lerInteiro(scanner);
                 switch (opcao) {
                     case 1 -> cadastrarLivro(scanner, livroDAO);
+                    case 2 -> cadastrarUsuario(scanner, usuarioDAO);
                     case 5 -> listarLivrosDisponiveis(livroDAO);
                     case 0 -> System.out.println("Ate mais!");
                     default -> System.out.println("Opcao invalida.");
@@ -40,6 +45,7 @@ public class Main {
         System.out.println();
         System.out.println("=== Biblioteca ===");
         System.out.println("1. Cadastrar livro");
+        System.out.println("2. Cadastrar usuario");
         System.out.println("5. Listar livros disponiveis");
         System.out.println("0. Sair");
         System.out.print("Escolha uma opcao: ");
@@ -61,6 +67,21 @@ public class Main {
             System.out.println("Livro cadastrado: " + livro);
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar livro: " + e.getMessage());
+        }
+    }
+
+    private static void cadastrarUsuario(Scanner scanner, UsuarioDAO usuarioDAO) {
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+
+        Usuario usuario = new Usuario(nome, email);
+        try (Connection conexao = ConexaoFactory.obterConexao()) {
+            usuarioDAO.salvar(conexao, usuario);
+            System.out.println("Usuario cadastrado: " + usuario);
+        } catch (Exception e) {
+            System.out.println("Erro ao cadastrar usuario: " + e.getMessage());
         }
     }
 
