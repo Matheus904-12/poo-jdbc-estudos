@@ -1,11 +1,18 @@
 package br.com.lucindo.biblioteca;
 
+import br.com.lucindo.biblioteca.config.ConexaoFactory;
+
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Sistema iniciado.");
+        try (var conexaoInicial = ConexaoFactory.obterConexao()) {
+            System.out.println("Sistema iniciado. Banco de dados pronto.");
+        } catch (Exception e) {
+            System.out.println("Falha ao iniciar o banco de dados: " + e.getMessage());
+            return;
+        }
 
         try (Scanner scanner = new Scanner(System.in)) {
             int opcao;
